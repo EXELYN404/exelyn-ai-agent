@@ -161,10 +161,9 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
         with st.chat_message("assistant", avatar="🤖"):
             with st.spinner("Menganalisis sistem..."):
                 # Daftar model pilihan jika model utama kehabisan kuota
-                models_to_try = [
-                    "gemini-2.0-flash-lite",
+                                models_to_try = [
+                    "gemini-2.0-flash",
                     "gemini-1.5-flash",
-                    "gemini-1.5-pro"
                 ]
                 
                 response_text = None
@@ -186,8 +185,8 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
                         continue
                 
                 # Jika semua model di atas terkena limit
-                if not response_text:
-                    response_text = "⚠️ [WARNING]: Server Gemini sedang padat / kuota per menit tercapai. Silakan tunggu 30–60 detik lalu coba lagi."
+                                if not response_text:
+                    response_text = f"⚠️ [DEBUG ERROR]: {last_error}"
 
                 st.write(response_text)
                 st.session_state.messages.append({"role": "assistant", "content": response_text})
