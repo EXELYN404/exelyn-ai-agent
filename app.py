@@ -157,22 +157,21 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
     with st.chat_message("user", avatar="🧑‍💻"):
         st.write(user_input)
 
-    # Kirim ke Gemini API
-    with st.chat_message("assistant", avatar="🤖"):
-        with st.spinner("Menganalisis sistem..."):
-            try:
-                response = client.models.generate_content(
-                    model="gemini-1.5-flash",
-",
-                    contents=user_input,
-                    config=types.GenerateContentConfig(
-                        system_instruction=SYSTEM_INSTRUCTION,
-                        temperature=0.6,
+         # Kirim ke Gemini API
+        with st.chat_message("assistant", avatar="🤖"):
+            with st.spinner("Menganalisis sistem..."):
+                try:
+                    response = client.models.generate_content(
+                        model="gemini-1.5-flash",
+                        contents=user_input,
+                        config=types.GenerateContentConfig(
+                            system_instruction=SYSTEM_INSTRUCTION,
+                            temperature=0.6,
+                        )
                     )
-                )
-                response_text = response.text
-            except Exception as e:
-                response_text = f"❌ [ERROR]: Terjadi kesalahan sistem: {str(e)}"
-            
-            st.write(response_text)
-            st.session_state.messages.append({"role": "assistant", "content": response_text})
+                    response_text = response.text
+                except Exception as e:
+                    response_text = f"❌ [ERROR]: Terjadi kesalahan sistem: {str(e)}"
+                
+                st.write(response_text)
+                st.session_state.messages.append({"role": "assistant", "content": response_text})
