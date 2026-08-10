@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXELYN // AI Cyber Agent</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Canvas untuk Hujan Biner -->
+    <canvas id="binaryCanvas"></canvas>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="title">EXELYN_AGENT_V1.0.exe</span>
+        </div>
+        
+        <div class="terminal-body" id="chatBox">
+            <div class="bot-msg"><b>[EXELYN]:</b> System Online. Siap membantu analisis coding & cyber security. Berikan perintah!</div>
+        </div>
+
+        <div class="terminal-input">
+            <span class="prompt">></span>
+            <input type="text" id="userInput" placeholder="Ketik perintah/pertanyaan di sini..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">KIRIM</button>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
