@@ -162,7 +162,8 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
         with st.spinner("Menganalisis sistem..."):
             try:
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash",
+                    model="model="gemini-1.5-flash",
+",
                     contents=user_input,
                     config=types.GenerateContentConfig(
                         system_instruction=SYSTEM_INSTRUCTION,
