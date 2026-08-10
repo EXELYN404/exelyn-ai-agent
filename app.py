@@ -157,21 +157,37 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
     with st.chat_message("user", avatar="🧑‍💻"):
         st.write(user_input)
 
-         # Kirim ke Gemini API
+                 # Kirim ke Gemini API dengan Fallback & Auto-Retry
         with st.chat_message("assistant", avatar="🤖"):
             with st.spinner("Menganalisis sistem..."):
-                try:
-                    response = client.models.generate_content(
-                        model="gemini-2.0-flash-lite",
-                        contents=user_input,
-                        config=types.GenerateContentConfig(
-                            system_instruction=SYSTEM_INSTRUCTION,
-                            temperature=0.6,
-                        )
-                    )
-                    response_text = response.text
-                except Exception as e:
-                    response_text = f"❌ [ERROR]: Terjadi kesalahan sistem: {str(e)}"
+                # Daftar model pilihan jika model utama kehabisan kuota
+                models_to_try = [
+                    "gemini-2.0-flash-lite",
+                    "gemini-1.5-flash",
+                    "gemini-1.5-pro"
+                ]
                 
+                response_text = None
+                
+                for model_name in models_to_try:
+                    try:
+                        response = client.models.generate_content(
+                            model=model_name,
+                            contents=user_input,
+                            config=types.GenerateContentConfig(
+                                system_instruction=SYSTEM_INSTRUCTION,
+                                temperature=0.6,
+                            )
+                        )
+                        response_text = response.text
+                        break  # Jika berhasil, keluar dari loop
+                    except Exception as e:
+                        # Jika kena rate limit (429), coba model berikutnya
+                        continue
+                
+                # Jika semua model di atas terkena limit
+                if not response_text:
+                    response_text = "⚠️ [WARNING]: Server Gemini sedang padat / kuota per menit tercapai. Silakan tunggu 30–60 detik lalu coba lagi."
+
                 st.write(response_text)
                 st.session_state.messages.append({"role": "assistant", "content": response_text})
