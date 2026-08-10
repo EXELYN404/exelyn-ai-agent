@@ -157,16 +157,16 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
     with st.chat_message("user", avatar="🧑‍💻"):
         st.write(user_input)
 
-                 # Kirim ke Gemini API dengan Fallback & Auto-Retry
+        # Kirim ke Gemini API dengan Fallback & Debug Error
         with st.chat_message("assistant", avatar="🤖"):
             with st.spinner("Menganalisis sistem..."):
-                # Daftar model pilihan jika model utama kehabisan kuota
-                                models_to_try = [
+                models_to_try = [
                     "gemini-2.0-flash",
                     "gemini-1.5-flash",
                 ]
                 
                 response_text = None
+                last_error = ""
                 
                 for model_name in models_to_try:
                     try:
@@ -179,14 +179,13 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
                             )
                         )
                         response_text = response.text
-                        break  # Jika berhasil, keluar dari loop
+                        break
                     except Exception as e:
-                        # Jika kena rate limit (429), coba model berikutnya
+                        last_error = str(e)
                         continue
                 
-                # Jika semua model di atas terkena limit
-                                if not response_text:
-                    response_text = f"⚠️ [DEBUG ERROR]: {last_error}"
+                if not response_text:
+                    response_text = f"❌ [ERROR DETAILED]: {last_error}"
 
                 st.write(response_text)
                 st.session_state.messages.append({"role": "assistant", "content": response_text})
