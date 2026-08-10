@@ -3,32 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXELYN // AI Cyber Agent</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Cyber Security Portal - Exelyn</title>
+    <style>
+        /* RESET & CSS BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: #05080a;
+            color: #00ff88;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* BACKGROUND ANIMASI BINER (CANVAS) */
+        #binaryCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.25; /* Transparansi animasi biner agar teks tetap terbaca */
+        }
+
+        /* CONTAINER UTAMA */
+        .content-container {
+            position: relative;
+            z-index: 2; /* Di atas canvas biner */
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* CARD/PANEL DENGAN EFEK GLOWING MODERN */
+        .cyber-card {
+            background: rgba(13, 20, 28, 0.75);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cyber-card:hover {
+            border-color: #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.25);
+        }
+
+        /* HEADER & LOGO */
+        .avatar-box {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0b0f12;
+        }
+
+        .title-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .subtitle-text {
+            color: #8b949e;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* EFEK INPUT BOX modern */
+        .input-group {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .cyber-input {
+            width: 100%;
+            padding: 15px 20px;
+            background-color: #111822;
+            border: 1px solid #2d3748;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .cyber-input:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+        }
+
+        /* BUTTON STYLE */
+        .btn-action {
+            width: 100%;
+            margin-top: 15px;
+            padding: 14px;
+            background: linear-gradient(135deg, #00ff88, #00b359);
+            border: none;
+            border-radius: 10px;
+            color: #05080a;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+    </style>
 </head>
 <body>
-    <!-- Canvas untuk Hujan Biner -->
+
+    <!-- CANVAS ANIMASI BINER -->
     <canvas id="binaryCanvas"></canvas>
 
-    <div class="terminal-container">
-        <div class="terminal-header">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-            <span class="title">EXELYN_AGENT_V1.0.exe</span>
-        </div>
-        
-        <div class="terminal-body" id="chatBox">
-            <div class="bot-msg"><b>[EXELYN]:</b> System Online. Siap membantu analisis coding & cyber security. Berikan perintah!</div>
-        </div>
+    <!-- KONTEN WEB UTAMA -->
+    <div class="content-container">
+        <div class="cyber-card">
+            <div class="avatar-box">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                    <circle cx="12" cy="5" r="2"></circle>
+                    <path d="M12 7v4"></path>
+                    <line x1="8" y1="16" x2="8.01" y2="16"></line>
+                    <line x1="16" y1="16" x2="16.01" y2="16"></line>
+                </svg>
+            </div>
+            
+            <h1 class="title-text">EXELYN AGENT V1</h1>
+            <p class="subtitle-text">System Online. Cyber Security & Code Intelligence System.</p>
 
-        <div class="terminal-input">
-            <span class="prompt">></span>
-            <input type="text" id="userInput" placeholder="Ketik perintah/pertanyaan di sini..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()">KIRIM</button>
+            <div class="input-group">
+                <input type="text" class="cyber-input" placeholder="Masukkan perintah / pertanyaan sistem...">
+            </div>
+
+            <button class="btn-action">JALANKAN PERINTAH</button>
         </div>
     </div>
 
-    <script src="/static/script.js"></script>
+    <!-- JAVASCRIPT ANIMASI BINER (MATRIX EFFECT) -->
+    <script>
+        const canvas = document.getElementById('binaryCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Atur ukuran canvas menyesuaikan layar
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Karakter Biner (0 dan 1)
+        const binaryChars = '01';
+        const fontSize = 16;
+        let columns = Math.floor(canvas.width / fontSize);
+
+        // Array untuk menyimpan koordinat Y setiap kolom
+        let drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
+        }
+
+        // Fungsi menggambar animasi biner
+        function drawMatrix() {
+            // Efek fading jejak karakter
+            ctx.fillStyle = 'rgba(5, 8, 10, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff88'; // Warna teks biner
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                // Pilih '0' atau '1' secara acak
+                const text = binaryChars.charAt(Math.floor(Math.random() * binaryChars.length));
+                
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                ctx.fillText(text, x, y);
+
+                // Reset titik jatuh jika sudah lewat bawah layar
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        // Jalankan loop animasi 30 FPS
+        setInterval(drawMatrix, 33);
+    </script>
 </body>
 </html>
