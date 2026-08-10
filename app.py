@@ -1,3 +1,4 @@
+import time
 import streamlit as st
 import os
 from google import genai
@@ -157,7 +158,7 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
     with st.chat_message("user", avatar="🧑‍💻"):
         st.write(user_input)
 
-        # Kirim ke Gemini API dengan Fallback & Debug Error
+                # Kirim ke Gemini API dengan Fallback, Delay & Retry
         with st.chat_message("assistant", avatar="🤖"):
             with st.spinner("Menganalisis sistem..."):
                 models_to_try = [
@@ -182,6 +183,7 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
                         break
                     except Exception as e:
                         last_error = str(e)
+                        time.sleep(5)  # Beri jeda 5 detik untuk mereset rate limit per menit
                         continue
                 
                 if not response_text:
