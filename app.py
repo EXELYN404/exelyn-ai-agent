@@ -162,7 +162,7 @@ if user_input := st.chat_input("Ketik perintah / pertanyaan di sini..."):
             with st.spinner("Menganalisis sistem..."):
                 models_to_try = [
                     "gemini-2.0-flash",
-                    "gemini-1.5-flash",
+                    "gemini-2.0-flash-lite",
                 ]
                 
                 response_text = None
