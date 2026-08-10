@@ -1,12 +1,9 @@
 import streamlit as st
-import time
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 # 1. Konfigurasi Halaman Streamlit
 st.set_page_config(
     page_title="Exelyn agent V1",
-    page_icon="🤖",
     layout="centered"
 )
 
@@ -17,7 +14,7 @@ Tugas utama kamu adalah membantu pengguna dalam menjawab pertanyaan seputar pene
 Gunakan gaya bahasa yang profesional, ala hacker yang cerdas, tegas, dan responsif.
 """
 
-# 2. Custom CSS untuk Tampilan Dark/Matrix UI Modern
+# 2. Custom CSS untuk Tampilan Dark UI
 st.markdown("""
     <style>
     /* Background Dark Theme */
@@ -59,9 +56,6 @@ st.markdown("""
         font-size: 14px;
         margin-top: 25px;
         margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
     }
     
     /* Styling Tombol Saran */
@@ -93,8 +87,11 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 4. Inisialisasi Client Gemini
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+# 4. Inisialisasi Client LLM7 (OpenAI Compatible API)
+client = OpenAI(
+    api_key=st.secrets["LLM7_API_KEY"],
+    base_url="https://api.llm7.io/v1"
+)
 
 # 5. Inisialisasi Chat History
 if "messages" not in st.session_state:
@@ -105,19 +102,18 @@ prompt_selected = None
 
 # 6. Tampilkan Suggestion Cards (Hanya jika obrolan belum dimulai)
 if len(st.session_state.messages) == 0:
-    st.markdown('<div class="section-title">⚡ Disarankan</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Disarankan</div>', unsafe_allow_html=True)
     
-    if st.button("🛡️ Hardening server Linux\nchecklist keamanan praktis"):
+    if st.button("Hardening server Linux\nchecklist keamanan praktis"):
         prompt_selected = "Berikan checklist keamanan praktis untuk hardening server Linux."
-    if st.button("🐍 Reverse shell Python\nbeserta teknik deteksinya"):
+    if st.button("Reverse shell Python\nbeserta teknik deteksinya"):
         prompt_selected = "Jelaskan tentang reverse shell Python beserta teknik deteksinya."
-    if st.button("🔍 Analisis malware\nstatic & dynamic analysis"):
+    if st.button("Analisis malware\nstatic & dynamic analysis"):
         prompt_selected = "Bagaimana alur analisis malware menggunakan static dan dynamic analysis?"
 
 # 7. Tampilkan Riwayat Chat
 for msg in st.session_state.messages:
-    avatar = "🤖" if msg["role"] == "assistant" else "👤"
-    with st.chat_message(msg["role"], avatar=avatar):
+    with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
 # 8. Tangkap Input dari User atau Tombol Saran
@@ -131,39 +127,25 @@ if prompt_selected and not user_input:
 if user_input:
     # Simpan & tampilkan pesan user
     st.session_state.messages.append({"role": "user", "content": user_input})
-    with st.chat_message("user", avatar="👤"):
+    with st.chat_message("user"):
         st.write(user_input)
 
-    # Kirim ke Gemini API
-    with st.chat_message("assistant", avatar="🤖"):
+    # Kirim ke LLM7 API
+    with st.chat_message("assistant"):
         with st.spinner("Menganalisis sistem..."):
-            models_to_try = [
-                "gemini-2.0-flash",
-                "gemini-2.0-flash-lite",
-            ]
-            
-            response_text = None
-            last_error = ""
-            
-            for model_name in models_to_try:
-                try:
-                    response = client.models.generate_content(
-                        model=model_name,
-                        contents=user_input,
-                        config=types.GenerateContentConfig(
-                            system_instruction=SYSTEM_INSTRUCTION,
-                            temperature=0.6,
-                        )
-                    )
-                    response_text = response.text
-                    break
-                except Exception as e:
-                    last_error = str(e)
-                    time.sleep(2)
-                    continue
-            
-            if not response_text:
-                response_text = f"❌ [ERROR DETAILED]: {last_error}"
+            try:
+                api_messages = [{"role": "system", "content": SYSTEM_INSTRUCTION}]
+                for m in st.session_state.messages:
+                    api_messages.append({"role": m["role"], "content": m["content"]})
+
+                response = client.chat.completions.create(
+                    model="llm7",
+                    messages=api_messages,
+                    temperature=0.6,
+                )
+                response_text = response.choices[0].message.content
+            except Exception as e:
+                response_text = f"[ERROR]: {str(e)}"
 
             st.write(response_text)
             st.session_state.messages.append({"role": "assistant", "content": response_text})
