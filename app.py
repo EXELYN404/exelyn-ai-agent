@@ -130,7 +130,7 @@ if not api_key:
     st.stop()
 
 # 4. Inisialisasi Google Gemini Client
-client = genai.Client(api_key=api_key)
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 SYSTEM_INSTRUCTION = """
 Nama kamu adalah Exelyn, sebuah AI Agent ahli di bidang Cyber Security dan Software Engineering.
